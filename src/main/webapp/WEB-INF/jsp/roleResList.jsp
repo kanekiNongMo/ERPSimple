@@ -18,8 +18,7 @@
 <!-- Bootstrap Core CSS -->
 <link href="<%=basePath%>resource/css/bootstrap.min.css"
 	rel="stylesheet" />
-<link href="<%=basePath%>resource/css/erp.css"
-	rel="stylesheet" />
+<link href="<%=basePath%>resource/css/erp.css" rel="stylesheet" />
 </head>
 <body>
 	<div id="wrapper">
@@ -29,37 +28,36 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<a href="<%=basePath%>/roleList.action" class="btn btn-primary">返回</a>
-							${ROLENAME}权限信息列表
-							<a href="#" class="btn btn-primary" data-toggle="modal"
-								data-target="#newResRoleDialog" onclick="clearResRole()" style="float: right; margin-right: 12%; " >添加</a>
+							${ROLENAME}权限信息列表 <a href="#" class="btn btn-primary"
+								data-toggle="modal" data-target="#newResRoleDialog"
+								onclick="clearResRole()"
+								style="float: right; margin-right: 12%;">添加</a>
 						</div>
 
 						<!-- /.panel-heading -->
 						<div class="table-responsive">
-						<table class="table table-bordered table-striped table-hover">
-							<thead>
-								<tr>
-									<th>权限角色编号</th>
-									<th>权限描述</th>
-									<th>操作</th>
-								</tr>
-							</thead>
-							<tbody>
-								 <c:forEach items="${page.list}" var="resRole"> 
-								<tr>
-									<td>${resRole.roleResId}</td>
-									<td>${resRole.res.resName}</td>
-									<td> <a href="#"
-										class="btn btn-danger btn-xs deleteRes"
-										onclick="deleteRoleRes(${resRole.roleResId})">删除</a>
-									</td>
-								</tr>
-							 </c:forEach> 
-							</tbody>
-							
-						</table>
+							<table class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th>权限角色编号</th>
+										<th>权限描述</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach items="${page.list}" var="resRole">
+										<tr>
+											<td>${resRole.roleResId}</td>
+											<td>${resRole.res.resName}</td>
+											<td><a href="#" class="btn btn-danger btn-xs deleteRes"
+												onclick="deleteRoleRes(${resRole.roleResId})">删除</a></td>
+										</tr>
+									</c:forEach>
+								</tbody>
+
+							</table>
 						</div>
-						
+
 						<div class="col-md-12 text-right">
 							<kaneki:page
 								url="${pageContext.request.contextPath }/getResByRoleId.action" />
@@ -85,26 +83,24 @@
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" id="new_roleRes_form">
-						<input type="hidden" id="roleId" name="role.roleId" value="${ROLEID}"/>
+						<input type="hidden" id="roleId" name="role.roleId"
+							value="${ROLEID}" />
 						<div class="form-group">
-						<label for="customerFrom" class="col-sm-2 control-label">权限名称</label> 
-						<div class="col-sm-10">
-						<select	class="form-control" id="resFrom" name="res.resId">
-							<option value="">--请选择--</option>
-							<c:forEach items="${RES}" var="res">
-								<option value="${res.resId}">
-								    ${res.resName}
-								</option>
-							</c:forEach>
-						</select>
+							<label for="customerFrom" class="col-sm-2 control-label">权限名称</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="resFrom" name="res.resId">
+									<option value="">--请选择--</option>
+									<c:forEach items="${RES}" var="res">
+										<option value="${res.resId}">${res.resName}</option>
+									</c:forEach>
+								</select>
+							</div>
 						</div>
-					</div>
 					</form>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary"
-						onclick="createRes()">赋予权限</button>
+					<button type="button" class="btn btn-primary" onclick="createRes()">赋予权限</button>
 				</div>
 			</div>
 		</div>
