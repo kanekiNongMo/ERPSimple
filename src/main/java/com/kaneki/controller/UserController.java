@@ -89,7 +89,7 @@ public class UserController {
 
 	// 退出，清除session
 	@LogAnnotation(operateType = "退出登录")
-	@RequestMapping(value = "/logout.action")
+	@RequestMapping(value = "/logout")
 	public String logOut(HttpSession session) {
 		session.removeAttribute("USER_SESSION");
 		session.invalidate();
