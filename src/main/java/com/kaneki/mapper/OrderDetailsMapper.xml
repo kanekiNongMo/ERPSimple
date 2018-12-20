@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.OrderDetailsMapper">
+	<!-- 添加订单明细 -->
+	<insert id="addOrderDetails" parameterType="OrderDetails">
+		insert into
+		ORDERDETAILS(ORDER_DETAILS_ID,COMMODITY_ID,ORDER_ID,UNIT_PRICE,ORDER_QUANTITY,SURPLUS)
+		values(seq_orderDetails.Nextval,#{commodity.commodityId},#{order.orderId},#{unitPrice},#{orderQuantity},#{surplus})
+	</insert>
+
+	<!-- 修改订单明细 -->
+	<update id="updateOrderDetails" parameterType="OrderDetails">
+		update ORDERDETAILS
+		<trim prefix="set" suffixOverrides=",">
+			<if test="commodity !=null">
+				<if test="commodity.commodityId != null">
+					COMMODITY_ID=#{commodity.commodityId},
+				</if>
+			</if>
+			<if test="order!= null">
+				<if test="order.orderId != null ">
+					ORDER_ID=#{order.orderId},
+				</if>
+			</if>
+			<if test="unitPrice != null">
+				UNIT_PRICE=#{unitPrice},
+			</if>
+			<if test="orderQuantity != null">
+				ORDER_QUANTITY=#{orderQuantity},
+			</if>
+			<if test="surplus != null">
+				SURPLUS=#{surplus},
+			</if>
+		</trim>
+		where
+		ORDER_DETAILS_ID=#{orderDetailsId}
+	</update>
+
+	<!-- 删除订单明细 -->
+	<delete id="deleteOrderDetails" parameterType="Integer">
+		delete from
+		ORDERDETAILS where
+		ORDER_DETAILS_ID=#{orderDetailsId}
+	</delete>
+
+	<!-- 根据orderDetailsId查询订单明细 -->
+	<select id="getOrderDetailsById" parameterType="Integer"
+		resultMap="OrderDetailsMap">
+		select * from ORDERDETAILS where
+		ORDER_DETAILS_ID=#{orderDetailsId}
+	</select>
+	
+	<sql id="whereDetails">
+		<where>
+			<if test="commodity != null">
+				<if test="commodity.commodityName!= null ">
+					<bind name="CommodityName"
+						value="'%'+commodity.commodityName+'%'" />
+					c.COMMODITY_NAME like #{CommodityName}
+				</if>
+			</if>
+		</where>
+	</sql>
+
+	<!-- 根据商品名称模糊分页查询订单明细 -->
+	<select id="findOrderDetails" resultMap="OrderDetailsMap">
+		select xxx.* from
+		(select xx.*,rownum rn from
+		(select *
+		from ORDERDETAILS
+		od inner join
+		commodity c
+		on
+		od.commodity_id=c.commodity_id
+		inner join
+		orderform o
+		on
+		od.order_id=o.order_id
+		<include refid="whereDetails"/>
+		order by od.order_details_id desc)xx
+		where rownum
+		&lt;=(#{page}*#{size}))xxx
+		where rn &gt;((#{page}-1)*#{size})
+	</select>
+
+	<!-- 返回 -->
+	<resultMap type="OrderDetails" id="OrderDetailsMap">
+		<id property="orderDetailsId" column="ORDER_DETAILS_ID"
+			javaType="Integer" />
+		<result property="unitPrice" column="UNIT_PRICE"
+			javaType="Double" />
+		<result property="orderQuantity" column="ORDER_QUANTITY"
+			javaType="Integer" />
+		<result property="surplus" column="SURPLUS" javaType="Integer" />
+		<association property="commodity" javaType="Commodity">
+			<id column="COMMODITY_ID" property="commodityId"
+				javaType="Integer" />
+			<result column="COMMODITY_NAME" property="commodityName"
+				javaType="String" />
+			<result column="PLACE_PRODUCTION" property="placeProduction"
+				javaType="String" />
+			<result column="MANUFACTURER" property="manufacturer"
+				javaType="String" />
+			<result column="PURCHASE_PRICE" property="purchasePrice"
+				javaType="Double" />
+			<result column="SELLING_PRICE" property="sellingPrice"
+				javaType="Double" />
+			<result column="VOLUME" property="volume" javaType="Integer" />
+			<result column="MIN_QUANTITY" property="minQuantity"
+				javaType="Integer" />
+			<result column="MAX_QUANTITY" property="maxQuantity"
+				javaType="Integer" />
+		</association>
+		<association property="order" javaType="OrderForm">
+			<id column="ORDER_ID" property="orderId" javaType="Integer" />
+			<result column="CREATER" property="creater" javaType="String" />
+			<result column="CREATE_TIME" property="cTime"
+				javaType="String" />
+			<result column="AUDITOR" property="auditor" javaType="String" />
+			<result column="AUDIT_TIME" property="aTime" javaType="String" />
+			<result column="DOCUMENTARY" property="documentary"
+				javaType="String" />
+			<result column="END_TIME" property="eTime" javaType="String" />
+			<result column="ORDER_TYPE" property="orderType"
+				javaType="Integer" />
+			<result column="ORDER_STATUS" property="orderStatus"
+				javaType="Integer" />
+			<result column="TOTAL_QUANTITY" property="totalQuantity"
+				javaType="Integer" />
+			<result column="AGGREGATE_AMOUNT" property="aggregateAmount"
+				javaType="Double" />
+		</association>
+	</resultMap>
+
+	<!-- 查询订单明细总数 -->
+	<select id="getCountOrderDeatils" resultType="int" parameterType="OrderDetails">
+		select count(*)
+		total from ORDERDETAILS
+		od inner join
+		commodity c
+		on
+		od.commodity_id=c.commodity_id
+		<include refid="whereDetails"/>
+	</select>
+
+</mapper>

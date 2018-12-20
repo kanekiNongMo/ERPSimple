@@ -1,0 +1,64 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    background: url("../images/bg-01.jpg");
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.form{
+    padding-top: 50px;
+    padding-left: 55px;
+    width: 330px;
+    height: 350px;
+    background:white;
+    margin-left: 590px;
+    margin-top: 150px;
+    -moz-border-radius: 17px;
+    -webkit-border-radius: 17px;
+    border-radius:17px;
+}
+.form_title{
+    display: block;
+    font-family: 'Microsoft Yahei';
+    text-align: center;
+    margin-right: 53px;
+    font-size: 39px;
+    color: #333333;
+    line-height: 1.5;
+}
+
+.point_out{
+	margin: 0px;
+	padding:0px;
+	color: #333333;
+	
+}
+
+input{
+    border: 1px solid black;
+    border-radius: 8px;
+    height: 42px;
+    line-height: 42px;
+    width:260px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+input::-webkit-input-placeholder{ /*WebKit browsers*/
+    color: #adadad;;
+}
+input::-moz-input-placeholder{ /*Mozilla Firefox*/
+    color: #adadad;;
+}
+input::-ms-input-placeholder{ /*Internet Explorer*/
+    color: #adadad;;
+}
+#login{
+    border-radius: 8px;
+    background: #c477ff;
+    color: white;
+    font-size: 18px;
+    font-family: 'Microsoft Yahei';
+}

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.OrderFormMapper">
+	<!-- 新建订单 -->
+	<insert id="addOrder" parameterType="OrderForm">
+		insert into
+		OrderForm(ORDER_ID,SUPPLIER_ID,CREATER,CREATE_TIME,AUDITOR,AUDIT_TIME
+		,DOCUMENTARY,END_TIME,ORDER_TYPE,ORDER_STATUS,TOTAL_QUANTITY,AGGREGATE_AMOUNT)
+		values(seq_ORDERFORM.Nextval,#{supplier.supplierId},#{creater},#{createTime},#{auditor}
+		,#{auditTime},#{documentary},#{endTime},#{orderType},#{orderStatus},#{totalQuantity},#{aggregateAmount})
+	</insert>
+
+	<!-- 删除订单 -->
+	<delete id="deleteOrderForm" parameterType="int">
+		delete from OrderForm
+		where order_id=#{value}
+	</delete>
+
+	<!-- 修改订单 -->
+	<update id="updateOrderForm" parameterType="OrderForm">
+		update OrderForm
+		<trim prefix="set" suffixOverrides=",">
+			<if test="supplier != null">
+				<if test="supplier.supplierId != null">
+					SUPPLIER_ID=#{supplier.supplierId},
+				</if>
+			</if>
+			<if test="creater != null and creater != ''">
+				CREATER=#{creater},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME=#{createTime},
+			</if>
+			<if test="auditor != null and auditor != ''">
+				AUDITOR=#{auditor},
+			</if>
+			<if test="documentary != null and documentary !=''">
+				DOCUMENTARY=#{documentary},
+			</if>
+			<if test="endTime != null ">
+				END_TIME=#{endTime},
+			</if>
+			<if test="orderType != null ">
+				ORDER_TYPE=#{orderType},
+			</if>
+			<if test="orderStatus != null ">
+				ORDER_STATUS=#{orderStatus},
+			</if>
+			<if test="totalQuantity != null ">
+				TOTAL_QUANTITY=#{totalQuantity},
+			</if>
+			<if test="aggregateAmount != null ">
+				AGGREGATE_AMOUNT=#{aggregateAmount},
+			</if>
+		</trim>
+		where order_id=#{orderId}
+	</update>
+
+	<sql id="whereOrder">
+	<where>
+			<if test="supplier != null">
+				<if test="supplier.supplierId != null ">
+					o.SUPPLIER_ID = #{supplier.supplierId}
+				</if>
+			</if>
+			<if test="orderType != null">
+				and o.ORDER_TYPE = #{orderType}
+			</if>
+			<if test="orderStatus != null">
+				and o.ORDER_STATUS = #{orderStatus}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 根据供应商id,订单类型，订单状态分页查询 -->
+	<select id="findOrderForm" parameterType="OrderForm"
+		resultMap="OrderFormMap">
+		select xxx.* from(
+		select xx.*,rownum as rn
+		from(select * from OrderForm
+		o
+		inner join Suppliers s on
+		o.supplier_id=s.supplier_id
+		<include refid="whereOrder"/>
+		order by o.order_id desc)xx
+		<if test="page !=null and size !=null">
+			where rownum &lt;=(#{page}*#{size})
+		</if>
+		)xxx
+		<if test="page !=null and size !=null">
+			where rn
+			&gt;((#{page}-1)*#{size})
+		</if>
+	</select>
+
+	<!-- 返回 -->
+	<resultMap type="OrderForm" id="OrderFormMap">
+		<id column="ORDER_ID" property="orderId" javaType="Integer" />
+		<result column="CREATER" property="creater" javaType="String" />
+		<result column="CREATE_TIME" property="cTime" javaType="String" />
+		<result column="AUDITOR" property="auditor" javaType="String" />
+		<result column="AUDIT_TIME" property="aTime" javaType="String" />
+		<result column="DOCUMENTARY" property="documentary"
+			javaType="String" />
+		<result column="END_TIME" property="eTime" javaType="String" />
+		<result column="ORDER_TYPE" property="orderType"
+			javaType="Integer" />
+		<result column="ORDER_STATUS" property="orderStatus"
+			javaType="Integer" />
+		<result column="TOTAL_QUANTITY" property="totalQuantity"
+			javaType="Integer" />
+		<result column="AGGREGATE_AMOUNT" property="aggregateAmount"
+			javaType="Double" />
+		<association property="supplier" javaType="Supplier">
+			<id column="SUPPLIER_ID" property="supplierId" javaType="Integer" />
+			<result column="SUPPLIER_NAME" property="supplierName"
+				javaType="String" />
+		</association>
+	</resultMap>
+
+	<!-- 查询所有订单 -->
+	<select id="getOrder" resultType="OrderForm">
+		select ORDER_ID as orderId from
+		OrderForm
+	</select>
+
+	<!-- 查询订单总数 -->
+	<select id="getCountOrderForm" resultType="int" parameterType="OrderForm">
+		select count(*) total
+		from OrderForm o
+		<include refid="whereOrder"/>
+	</select>
+
+	<!-- 根据订单编号查询 -->
+	<select id="getOrderById" parameterType="int"
+		resultMap="OrderFormMap">
+		select *
+		from OrderForm where order_id=#{orderId}
+	</select>
+</mapper>

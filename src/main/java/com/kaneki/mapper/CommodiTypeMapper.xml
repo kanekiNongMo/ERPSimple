@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.CommodiTypeMapper">
+	<!-- 添加商品类型 -->
+	<insert id="addComType" parameterType="CommodiType">
+		insert into
+		COMMODITYTYPE(COMTYPE_ID,COMTYPE_NAME) values
+		(SEQ_comType.nextval,#{comTypeName})
+	</insert>
+
+	<!-- 修改商品类型 -->
+	<update id="updateComType" parameterType="CommodiType">
+		update COMMODITYTYPE
+		<set>
+			<if test="comTypeName !=null and comTypeName !=''">
+				COMTYPE_NAME=#{comTypeName}
+			</if>
+		</set>
+		where COMTYPE_ID=#{comTypeId}
+	</update>
+
+	<!-- 删除商品类型 -->
+	<delete id="deleteComType" parameterType="Integer">
+		delete from
+		COMMODITYTYPE
+		where COMTYPE_ID=#{comTypeId}
+	</delete>
+
+	<!-- 商品类型别名 -->
+	<sql id="ComTypeColumes">
+		COMTYPE_ID as comTypeId,COMTYPE_NAME as comTypeName
+	</sql>
+
+	<sql id="whereComType">
+	<if test="comTypeName != null and comTypeName !=''">
+			<bind name="ComTypeName" value="'%'+comTypeName+'%'" />
+			where COMTYPE_NAME like #{ComTypeName}
+		</if>
+	</sql>
+
+	<!-- 分页查询商品类型，还可根据商品类型名称模糊分页查询 -->
+	<select id="findAllComType" parameterType="CommodiType"
+		resultType="CommodiType">
+		select
+		<include refid="ComTypeColumes" />
+		from
+		(select xx.*, rownum as rn from
+		(select * from COMMODITYTYPE
+		<include refid="whereComType"/>
+		order by COMTYPE_ID desc) xx
+		where rownum &lt;= (#{size}*#{page})) xxx
+		where rn &gt; ((#{page}-1)*#{size})
+	</select>
+
+	<!-- 根据商品类型编号查询 -->
+	<select id="findComTypeById" parameterType="Integer"
+		resultType="CommodiType">
+		select
+		<include refid="ComTypeColumes" />
+		from COMMODITYTYPE where COMTYPE_ID=#{comTypeId}
+	</select>
+
+	<!-- 根据商品类型名称模糊查询 -->
+	<select id="findComTypeByName" parameterType="CommodiType"
+		resultType="CommodiType">
+		<bind name="ComTypeName" value="'%'+comTypeName+'%'" />
+		select
+		<include refid="ComTypeColumes" />
+		from COMMODITYTYPE where COMTYPE_NAME like #{ComTypeName}
+		<if test="comTypeId != null">
+			and COMTYPE_ID=#{comTypeId}
+		</if>
+		ORDER BY COMTYPE_ID ASC
+	</select>
+
+	<!-- 查询所有商品类型 -->
+	<select id="getComType" resultType="CommodiType">
+		select
+		<include refid="ComTypeColumes" />
+		from COMMODITYTYPE order by COMTYPE_ID desc
+	</select>
+
+	<!-- 查询商品类型总数 -->
+	<select id="findCountComType" resultType="int" parameterType="CommodiType">
+		select count(*) total
+		from COMMODITYTYPE
+		<include refid="whereComType"/>
+	</select>
+</mapper>

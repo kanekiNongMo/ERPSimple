@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.RoleMapper">
+	<!-- 添加角色 -->
+	<insert id="addRole" parameterType="Role">
+		insert into
+		Role(ROLE_ID,ROLE_NAME,ROLE_CODE)
+		values(SEQ_ROLE.nextval,#{roleName},#{roleCode})
+	</insert>
+
+	<!-- 修改角色 -->
+	<update id="updateRole" parameterType="Role">
+		update Role
+		<trim prefix="set" suffixOverrides=",">
+			<if test="roleName !=null and roleName !=''">
+				ROLE_NAME=#{roleName},
+			</if>
+			<if test="roleCode !=null and roleCode !=''">
+				ROLE_CODE=#{roleCode},
+			</if>
+		</trim>
+		where ROLE_ID=#{roleId}
+	</update>
+
+	<!-- 删除角色 -->
+	<delete id="deleteRole" parameterType="Integer">
+		delete from Role
+		where
+		ROLE_ID=#{roleId}
+	</delete>
+
+	<!-- 角色字段别名 -->
+	<sql id="AsRole">ROLE_ID as roleId,ROLE_NAME as roleName,ROLE_CODE as
+		roleCode
+	</sql>
+
+	<!-- 根绝角色编号查询 -->
+	<select id="getRoleById" parameterType="Integer"
+		resultType="Role">
+		select
+		<include refid="AsRole" />
+		from Role where ROLE_ID=#{roleId}
+	</select>
+
+	<!-- 查询所有角色 -->
+	<select id="getAllRole" resultType="Role">
+		select
+		<include refid="AsRole" />
+		from Role order by ROLE_ID desc
+	</select>
+
+	<!-- 根绝角色名称模糊查询 -->
+	<select id="findRoleByName" parameterType="Role"
+		resultType="Role">
+		<bind name="RoleName" value="'%'+roleName+'%'" />
+		select
+		<include refid="AsRole" />
+		from Role where ROLE_NAME like #{RoleName}
+		<if test="roleId != null">
+			and ROLE_ID=#{roleId}
+		</if>
+	</select>
+</mapper>

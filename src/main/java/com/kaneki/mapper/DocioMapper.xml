@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.DocioMapper">
+	<!-- 添加商品库存操作明细 -->
+	<insert id="addDoico" parameterType="Docio">
+		insert into
+		docio(cio_id,USER_ID,COMMODITY_ID,STOREHOUSE_ID,OPERATE_TIME,OPERATE_TYPE,NUM)
+		values
+		(SEQ_docio.NEXTVAL,#{users.userId,jdbcType=NUMERIC},#{commodity.commodityId,jdbcType=NUMERIC}
+		,#{storeHouse.storeHouseId,jdbcType=NUMERIC},sysdate,#{operateType,jdbcType=NUMERIC},#{num,jdbcType=NUMERIC})
+	</insert>
+
+	<sql id="whereDocio">
+	<where>
+			<if test="users !=null">
+				<if test=" users.userId !=null">
+					d.USER_ID=#{users.userId}
+				</if>
+			</if>
+			<if test="commodity  !=null">
+				<if test="commodity.commodityId  !=null">
+					and d.COMMODITY_ID=#{commodity.commodityId}
+				</if>
+			</if>
+			<if test=" storeHouse !=null">
+				<if test="storeHouse.storeHouseId !=null">
+					and d.STOREHOUSE_ID=#{storeHouse.storeHouseId}
+				</if>
+			</if>
+			<if test="operateType !=null">
+				and d.OPERATE_TYPE=#{operateType}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 分页根据用户编号，商品编号，仓库编号，操作类型查询商品库存操作明细 -->
+	<select id="findDocio" resultMap="DocioMap"
+		parameterType="Docio">
+		select xxx.* ,to_char(xxx.OPERATE_TIME,'yyyy-mm-dd hh24:mi:ss') time
+		from (select xx.*,rownum as rn from (select * from docio d
+		inner join
+		users u on d.user_id=u.user_id
+		inner join commodity c on
+		d.commodity_id=c.commodity_id
+		inner join commoditytype ct on
+		c.comtype_id=ct.comtype_id
+		inner join
+		storehouse s on
+		d.storehouse_id=s.storehouse_id
+		<include refid="whereDocio"/>
+		order by d.cio_id desc
+		)xx
+		where rownum &lt;= (#{size}*#{page})) xxx
+		where rn &gt; ((#{page}-1)*#{size})
+	</select>
+
+	<!-- 查询商品库存操作明细总数 -->
+	<select id="findCountDocio" resultType="int" parameterType="Docio">
+		select count(*) total
+		from docio d
+		<include refid="whereDocio"/>
+	</select>
+
+	<!-- 返回 -->
+	<resultMap type="Docio" id="DocioMap">
+		<id column="cio_id" property="cioId" javaType="Integer" />
+		<result column="OPERATE_TIME" property="operateTime"
+			javaType="Date" />
+		<result column="OPERATE_TYPE" property="operateType"
+			javaType="Integer" />
+		<result column="NUM" property="num" javaType="Integer" />
+		<result column="time" property="time" javaType="String" />
+		<association property="users" javaType="User">
+			<id column="USER_ID" property="userId" javaType="Integer" />
+			<result property="userName" column="USER_NAME"
+				javaType="String" />
+			<result property="userPhone" column="USER_PHONE"
+				javaType="String" />
+		</association>
+		<association property="commodity" javaType="Commodity">
+			<id column="COMMODITY_ID" property="commodityId"
+				javaType="Integer" />
+			<result column="COMMODITY_NAME" property="commodityName"
+				javaType="String" />
+			<result column="PLACE_PRODUCTION" property="placeProduction"
+				javaType="String" />
+			<result column="MANUFACTURER" property="manufacturer"
+				javaType="String" />
+			<result column="PURCHASE_PRICE" property="purchasePrice"
+				javaType="Double" />
+			<result column="SELLING_PRICE" property="sellingPrice"
+				javaType="Double" />
+			<result column="VOLUME" property="volume" javaType="Integer" />
+			<result column="MIN_QUANTITY" property="minQuantity"
+				javaType="Integer" />
+			<result column="MAX_QUANTITY" property="maxQuantity"
+				javaType="Integer" />
+			<association property="comType" javaType="CommodiType">
+				<id column="COMTYPE_ID" property="comTypeId" javaType="Integer" />
+				<result column="COMTYPE_NAME" property="comTypeName"
+					javaType="String" />
+			</association>
+		</association>
+		<association property="storeHouse" javaType="StoreHouse">
+			<id column="STOREHOUSE_ID" property="storeHouseId"
+				javaType="Integer" />
+			<result column="STOREHOUSE_NAME" property="storeHouseName"
+				javaType="String" />
+			<result column="STOREHOUSE_ADDRESS"
+				property="storeHouseAddress" javaType="String" />
+		</association>
+	</resultMap>
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.StoreMapper">
+	<sql id="whereStore">
+		<where>
+			<if test="commodity !=null">
+				<if test="commodity.commodityId !=null">
+					s.commodity_id=#{commodity.commodityId}
+				</if>
+			</if>
+			<if test="storeHouse !=null">
+				<if test="storeHouse.storeHouseId !=null">
+				and	s.storehouse_id=#{storeHouse.storeHouseId}
+				</if>
+			</if>
+		</where>
+	</sql>
+
+	<!-- 分页查询 -->
+	<select id="findStore" parameterType="Store"
+		resultMap="storeMap">
+		select xxx.* from
+		(select
+		xx.* ,rownum as rn from (select *
+		from stock s
+		inner join
+		commodity c
+		on s.commodity_id=c.commodity_id
+		inner join
+		storehouse sh on
+		s.storehouse_id=sh.storehouse_id
+		<include refid="whereStore" />
+		order by
+		s.store_id desc) xx
+		<if test="page !=null and size !=null">
+			where rownum &lt;=(#{page}*#{size})
+		</if>
+		)xxx
+		<if test="page !=null and size !=null">
+			where rn
+			&gt;((#{page}-1)*#{size})
+		</if>
+	</select>
+
+	<!-- 根据条件查询总数 -->
+	<select id="getCountStore" resultType="int">
+		select count(*) total from stock s
+		<include refid="whereStore" />
+	</select>
+
+	<!-- 返回 -->
+	<resultMap type="Store" id="storeMap">
+		<id property="storeId" column="store_id" javaType="Integer" />
+		<result property="InventoryQuantity"
+			column="inventory_quantity" javaType="Integer" />
+		<association property="storeHouse" javaType="StoreHouse">
+			<id column="STOREHOUSE_ID" property="storeHouseId"
+				javaType="Integer" />
+			<result column="STOREHOUSE_NAME" property="storeHouseName"
+				javaType="String" />
+			<result column="STOREHOUSE_ADDRESS"
+				property="storeHouseAddress" javaType="String" />
+		</association>
+		<association property="commodity" javaType="Commodity">
+			<id column="COMMODITY_ID" property="commodityId"
+				javaType="Integer" />
+			<result column="COMMODITY_NAME" property="commodityName"
+				javaType="String" />
+			<result column="PLACE_PRODUCTION" property="placeProduction"
+				javaType="String" />
+			<result column="MANUFACTURER" property="manufacturer"
+				javaType="String" />
+			<result column="PURCHASE_PRICE" property="purchasePrice"
+				javaType="Double" />
+			<result column="SELLING_PRICE" property="sellingPrice"
+				javaType="Double" />
+			<result column="VOLUME" property="volume" javaType="Integer" />
+			<result column="MIN_QUANTITY" property="minQuantity"
+				javaType="Integer" />
+			<result column="MAX_QUANTITY" property="maxQuantity"
+				javaType="Integer" />
+		</association>
+	</resultMap>
+
+
+</mapper>

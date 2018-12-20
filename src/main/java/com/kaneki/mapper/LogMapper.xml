@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.LogMapper">
+	<!-- 添加日志 -->
+	<insert id="addLog" parameterType="Log">
+		insert into
+		LOGS(LOG_ID,USER_ID,LOG_RECORD,LOG_TIME,OPERATERESULT)
+		values(SEQ_LOGS.nextval,#{user.userId},#{logRecord},#{logTimel},#{operateresult})
+	</insert>
+
+	<!-- 更新日志 -->
+	<update id="updateLog" parameterType="Log">
+		update LOGS
+		<set>
+			<if test="logRecord !=null and logRecord !='' ">
+				LOG_RECORD=#{logRecord}
+			</if>
+		</set>
+		where LOG_ID=#{logId}
+	</update>
+
+	<!-- 删除日志 -->
+	<delete id="deleteLog" parameterType="Integer">
+		delete from LOGS where
+		LOG_ID=#{logId}
+	</delete>
+
+	<!-- 别名 -->
+	<sql id="LogColumes">LOG_ID as logId, LOG_RECORD as logRecord ,LOG_TIME as
+		logTimel
+	</sql>
+
+	<!-- 根据logId查询 -->
+	<select id="findLogById" parameterType="Integer"
+		resultMap="UserWithLogResult">
+		select * from LOGS where LOG_ID=#{logId}
+	</select>
+
+	<sql id="whereName">
+		<if test="user !=null">
+			<if test="user.userId !=null">
+				where L.USER_ID=#{user.userId}
+			</if>
+		</if>
+	</sql>
+
+	<!-- 查询部门，用户，日志表 -->
+	<select id="findUserAndDeptAndLog" resultMap="UserWithLogResult">
+		select xx.*
+		from(select x.* from (select L.*
+		,to_char(L.log_time,'yyyy-mm-dd
+		hh24:mi:ss') strtime,rownum as rn from
+		(select
+		*
+		from USERS
+		U inner join
+		LOGS L on U.USER_ID = L.USER_ID left
+		join
+		DEPARTMENT D on
+		U.DEPT_ID=D.DEPT_ID order by L.LOG_ID desc
+		<include refid="whereName" />
+		) L )x
+		where rownum &lt;=(#{size}*#{page})) xx
+		where rn &gt;
+		((#{page}-1)*#{size})
+	</select>
+
+	<select id="getTotal" resultType="int" parameterType="Log">
+		select count(*) from LOGS L
+		<include refid="whereName" />
+	</select>
+
+	<!-- 返回 -->
+	<resultMap type="Log" id="UserWithLogResult">
+		<id property="logId" column="LOG_ID" javaType="Integer" />
+		<result property="logRecord" column="LOG_RECORD"
+			javaType="String" />
+		<result property="logTimel" column="LOG_TIME"
+			javaType="java.util.Date" />
+		<result property="strtime" column="strtime" javaType="String" />
+		<result property="operateresult" column="OPERATERESULT"
+			javaType="String" />
+		<association property="dept" javaType="Dept">
+			<id property="deptId" column="DEPT_ID" javaType="Integer" />
+			<result property="deptName" column="DEPT_Name"
+				javaType="String" />
+		</association>
+		<association property="user" column="USER_ID"
+			javaType="User" select="com.kaneki.mapper.UserMapper.findUserById" />
+	</resultMap>
+</mapper>

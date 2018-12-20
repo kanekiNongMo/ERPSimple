@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.UserRoleMapper">
+	<!-- 添加用户角色 -->
+	<insert id="addUserRole" parameterType="UserRole">
+		insert into user_role
+		(USER_ROLE_ID,ROLE_ID,USER_ID)
+		values(seq_user_role.nextval,#{role.roleId},#{user.userId})
+	</insert>
+
+	<!-- 删除用户角色 -->
+	<delete id="deleteUserRole" parameterType="int">
+		delete from
+		user_role
+		where USER_ROLE_ID=#{value}
+	</delete>
+
+	<!-- 根据角色编号查询用户角色总数 -->
+	<select id="getCountUserByRoleId" parameterType="int"
+		resultType="int">
+		select count(*) total from user_role where role_id=#{value}
+	</select>
+
+	<!-- 根据角色编号查询该角色不存在的用户 -->
+	<select id="getAllUser" parameterType="int" resultType="User">
+		select
+		users.user_id as userId,users.user_name as userName
+		,users.user_phone
+		as userPhone
+		from users where users.user_id not in (select user_id from
+		user_role where
+		user_role.role_id=#{value})
+	</select>
+
+	<!-- 分页查询用户角色 -->
+	<select id="getUserByRoleId" parameterType="UserRole"
+		resultMap="UserRoleMap">
+		select * from
+		(select xx.*,rownum as rn from
+		(select * from
+		user_role
+		inner join users on user_role.user_id=users.user_id
+		inner join
+		role on user_role.role_id=role.role_id
+		where
+		user_role.role_id=#{role.roleId}
+		order by USER_ROLE_ID desc)xx
+		where
+		rownum &lt;=(#{page}*#{size}))xxx
+		where rn &gt;((#{page}-1)*#{size})
+	</select>
+
+	<!-- 返回UserRoleMap -->
+	<resultMap type="UserRole" id="UserRoleMap">
+		<id property="userRoleId" column="USER_ROLE_ID" javaType="int" />
+		<association property="role" javaType="Role">
+			<id property="roleId" column="ROLE_ID" javaType="Integer" />
+			<result property="roleName" column="ROLE_NAME" />
+		</association>
+		<association property="user" javaType="User">
+			<id property="userId" column="user_id" javaType="Integer" />
+			<result property="userName" column="USER_NAME" />
+		</association>
+	</resultMap>
+</mapper>

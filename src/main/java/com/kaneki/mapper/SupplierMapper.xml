@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.SupplierMapper">
+	<!-- 添加供应商 -->
+	<insert id="addSupplier" parameterType="Supplier">
+		insert into
+		SUPPLIERS(SUPPLIER_ID,SUPPLIER_NAME,SUPPLIER_CONTACT,SUPPLIER_PHONE,SUPPLIER_ADDRESS)
+		values(SEQ_SUPPLIERS.nextval,#{supplierName},#{supplierContact},#{supplierPhone},#{supplierAddress})
+	</insert>
+
+	<!-- 更新供应商 -->
+	<update id="updateSupplier" parameterType="Supplier">
+		update SUPPLIERS
+		<trim prefix="set" suffixOverrides=",">
+			<if test="supplierName !=null and supplierName !=''">
+				SUPPLIER_NAME=#{supplierName} ,
+			</if>
+			<if test="supplierContact !=null and supplierContact !=''">
+				SUPPLIER_CONTACT=#{supplierContact} ,
+			</if>
+			<if test="supplierPhone !=null and supplierPhone !=''">
+				SUPPLIER_PHONE=#{supplierPhone} ,
+			</if>
+			<if test="supplierAddress !=null and supplierAddress !=''">
+				SUPPLIER_ADDRESS=#{supplierAddress} ,
+			</if>
+		</trim>
+		where SUPPLIER_ID=#{supplierId}
+	</update>
+
+	<!-- 删除供应商 -->
+	<delete id="deleteSupplier" parameterType="Integer">
+		delete from SUPPLIERS
+		where SUPPLIER_ID=#{supplierId}
+	</delete>
+
+	<!-- 供应商字段别名 -->
+	<sql id="SupplierColumes">
+		SUPPLIER_ID as supplierId, SUPPLIER_NAME as
+		supplierName,SUPPLIER_CONTACT as supplierContact ,SUPPLIER_PHONE as
+		supplierPhone,SUPPLIER_ADDRESS as supplierAddress
+	</sql>
+
+	<!-- 根据id查询供应商 -->
+	<select id="findSupplierByID" parameterType="Integer"
+		resultType="Supplier">
+		select
+		<include refid="SupplierColumes" />
+		from SUPPLIERS
+		where SUPPLIER_ID=#{supplierId}
+	</select>
+	
+	<sql id="whereSup">
+		<where>
+			<if test="supplierName !=null and supplierName !=''">
+				<bind name="supName" value="'%'+supplierName+'%'" />
+				and SUPPLIER_NAME like #{supName}
+			</if>
+			<if test="supplierContact !=null and supplierContact !=''">
+				<bind name="supContact" value="'%'+supplierContact+'%'" />
+				and SUPPLIER_CONTACT like #{supContact}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 根据供应商名称，联系人分页查询 -->
+	<select id="findAllSupplier" parameterType="Supplier"
+		resultType="Supplier">
+		select
+		<include refid="SupplierColumes" />
+		from (select xx.* , rownum as rn from(select
+		*
+		from SUPPLIERS
+		<include refid="whereSup"/>
+		order by SUPPLIER_ID desc)xx
+		where rownum &lt;=(#{page}*#{size}))xxx
+		where rn &gt;((#{page}-1)*#{size})
+	</select>
+
+	<!-- 查询所有供应商 -->
+	<select id="getSup" resultType="Supplier">
+		select
+		<include refid="SupplierColumes" />
+		from SUPPLIERS order by SUPPLIER_ID
+	</select>
+
+	<!-- 查询供应商总数 -->
+	<select id="findCountSup" resultType="int" parameterType="Supplier">
+		select count(*) total from
+		SUPPLIERS
+		<include refid="whereSup"/>
+	</select>
+</mapper>

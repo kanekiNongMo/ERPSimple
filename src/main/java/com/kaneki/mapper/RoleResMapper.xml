@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.RoleResMapper">
+	<!-- 添加角色权限 -->
+	<insert id="addRoleRes" parameterType="RoleRes">
+		insert into
+		role_res(RES_ROLE_ID,RES_ID,ROLE_ID) values
+		(SEQ_ROLE_RES.nextval,#{res.resId},#{role.roleId})
+	</insert>
+
+	<!-- 删除角色权限 -->
+	<delete id="deleteRoleRes" parameterType="int">
+		delete from
+		role_res
+		where RES_ROLE_ID=#{value}
+	</delete>
+
+	<!-- 根据角色编号查询角色权限总数 -->
+	<select id="getCountResByRoleId" parameterType="int"
+		resultType="int">
+		select count(*) total from role_res where role_id=#{value}
+	</select>
+
+	<!-- 分页查询角色权限 -->
+	<select id="getResByRoleId" parameterType="RoleRes"
+		resultMap="roleResMap">
+		select * from
+		(select xx.*,rownum as rn from
+		(select * from
+		role_res
+		inner join res on role_res.res_id=res.res_id
+		inner join role on
+		role_res.role_id=role.role_id
+		where role_res.role_id=#{role.roleId}
+		order by res_role_id desc)xx
+		where rownum &lt;=(#{page}*#{size}))xxx
+		where rn
+		&gt;((#{page}-1)*#{size})
+	</select>
+
+	<!-- 返回roleResMap -->
+	<resultMap type="RoleRes" id="roleResMap">
+		<id property="roleResId" column="RES_ROLE_ID" javaType="Integer" />
+		<association property="role" javaType="Role">
+			<id property="roleId" column="ROLE_ID" javaType="Integer" />
+			<result property="roleName" column="ROLE_NAME" />
+		</association>
+		<association property="res" javaType="Res">
+			<id property="resId" column="RES_ID" javaType="Integer" />
+			<result property="resName" column="RES_NAME" />
+			<result property="url" column="URL" />
+		</association>
+	</resultMap>
+</mapper>

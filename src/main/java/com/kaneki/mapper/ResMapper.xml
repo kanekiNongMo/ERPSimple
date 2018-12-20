@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.ResMapper">
+	<!-- 添加权限 -->
+	<sql id="AsRes">RES_ID as resId,RES_NAME as resName,url </sql>
+	<insert id="addRes" parameterType="Res">
+		insert into
+		RES(RES_ID,RES_NAME,URL)
+		values(SEQ_RES.nextval,#{resName},#{url})
+	</insert>
+
+	<!-- 修改权限 -->
+	<update id="updateRes" parameterType="Res">
+		update RES
+		<trim prefix="set" suffixOverrides=",">
+			<if test="resName !=null and resName !=''">
+				RES_NAME=#{resName},
+			</if>
+			<if test="url !=null and url !=''">
+				URL=#{url},
+			</if>
+		</trim>
+		where RES_ID=#{resId}
+	</update>
+
+	<!-- 删除权限 -->
+	<delete id="deleteRes" parameterType="Integer">
+		delete from Res
+		where RES_ID=#{resId}
+	</delete>
+
+	<!-- 根据编号查询权限 -->
+	<select id="getResById" parameterType="Integer" resultType="Res">
+		select
+		<include refid="AsRes" />
+		from RES where RES_ID=#{resId}
+	</select>
+
+	<!-- 分页查询权限 -->
+	<select id="getPageRes" parameterType="Page" resultType="Res">
+		select resId,resName,url ,rn
+		from(
+		select
+		<include refid="AsRes" />,
+		rownum as rn
+		from (
+		select *
+		from res
+		order by res_id desc)
+		where rownum &lt;=(#{pageRows}*#{page}) ) xxx
+		where rn &gt;((#{page}-1)*#{pageRows})
+	</select>
+
+	<!-- 查询权限总数 -->
+	<select id="getResTotal" resultType="Integer">
+		select count(*) total from
+		res
+	</select>
+
+	<!-- 根据url查询权限 -->
+	<select id="findResByResUrl" parameterType="Res"
+		resultType="Res">
+		select
+		<include refid="AsRes" />
+		from RES where url=#{url}
+		<if test="resId != null">
+			and res_id=#{resId}
+		</if>
+	</select>
+
+	<!-- 根据角色编号查询该角色没有的权限 -->
+	<select id="getAllRes" parameterType="int" resultType="Res">
+		select
+		<include refid="AsRes" />
+		from res where res.res_id not in (select res_id from role_res where
+		role_res.role_id=#{value})
+	</select>
+
+</mapper>

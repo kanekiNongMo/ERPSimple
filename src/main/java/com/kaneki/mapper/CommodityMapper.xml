@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.CommodityMapper">
+	<!-- 添加商品 -->
+	<insert id="addCommodity" parameterType="Commodity">
+		insert into
+		COMMODITY(COMMODITY_ID,COMTYPE_ID,COMMODITY_NAME,PLACE_PRODUCTION,MANUFACTURER,PURCHASE_PRICE,SELLING_PRICE,VOLUME,MIN_QUANTITY,MAX_QUANTITY)
+		values
+		(SEQ_COMMODITY.NEXTVAL,#{comType.comTypeId,jdbcType=NUMERIC},#{commodityName,jdbcType=VARCHAR},#{placeProduction,jdbcType=VARCHAR},#{manufacturer,jdbcType=VARCHAR},#{purchasePrice,jdbcType=NUMERIC,numericScale=2},#{sellingPrice,jdbcType=NUMERIC,numericScale=2},#{volume,jdbcType=NUMERIC},#{minQuantity,jdbcType=NUMERIC},#{maxQuantity,jdbcType=NUMERIC})
+	</insert>
+
+	<!-- 修改商品 -->
+	<update id="updateCommodity" parameterType="Commodity">
+		update COMMODITY
+		<trim prefix="set" suffixOverrides=",">
+			<if test="comType.comTypeId != null">
+				COMTYPE_ID=#{comType.comTypeId},
+			</if>
+			<if test="commodityName != null and commodityName != ''">
+				COMMODITY_NAME=#{commodityName},
+			</if>
+			<if test="placeProduction != null and placeProduction != ''">
+				PLACE_PRODUCTION=#{placeProduction},
+			</if>
+			<if test="manufacturer != null and manufacturer != ''">
+				MANUFACTURER=#{manufacturer},
+			</if>
+			<if test="purchasePrice != null ">
+				PURCHASE_PRICE=#{purchasePrice},
+			</if>
+			<if test="sellingPrice != null ">
+				SELLING_PRICE=#{sellingPrice},
+			</if>
+			<if test="volume != null ">
+				VOLUME=#{volume},
+			</if>
+			<if test="minQuantity != null ">
+				MIN_QUANTITY=#{minQuantity},
+			</if>
+			<if test="maxQuantity != null ">
+				MAX_QUANTITY=#{maxQuantity},
+			</if>
+		</trim>
+		where COMMODITY_ID=#{commodityId}
+	</update>
+
+	<!-- 删除商品 -->
+	<delete id="deleteCommodity" parameterType="Integer">
+		delete from COMMODITY
+		where COMMODITY_ID=#{commodityId}
+	</delete>
+
+	<!-- 商品字段别名 -->
+	<sql id="CommodityColumes">
+		COMMODITY_ID as commodityId,COMMODITY_NAME as
+		commodityName,PLACE_PRODUCTION as
+		placeProduction,MANUFACTURER as
+		manufacturer ,
+		PURCHASE_PRICE as purchasePrice,SELLING_PRICE as
+		sellingPrice,VOLUME as volume ,
+		MIN_QUANTITY as minQuantity ,
+		MAX_QUANTITY as maxQuantity
+	</sql>
+
+	<sql id="whereCom">
+		<where>
+			<if test="commodityName != null and commodityName !=''">
+				<bind name="CommodityName" value="'%'+commodityName+'%'" />
+				COMMODITY_NAME like #{CommodityName}
+			</if>
+			<if test="comType !=null ">
+				<if test="comType.comTypeId != null">
+					and c.COMTYPE_ID = #{comType.comTypeId}
+				</if>
+			</if>
+		</where>
+	</sql>
+
+	<!-- 分页查询商品，还可以根据商品名称，商品类型分页查询 -->
+	<select id="findAllCommodity" parameterType="Commodity"
+		resultMap="CommodityMap">
+		select * from
+		(select xx.*, rownum as rn from
+		(select * from COMMODITY c
+		inner join COMMODITYTYPE t on
+		c.comtype_id=t.comtype_id
+		<include refid="whereCom"/>
+		order by COMMODITY_ID desc) xx
+		where rownum &lt;= (#{size}*#{page}))
+		xxx
+		where rn &gt; ((#{page}-1)*#{size})
+	</select>
+
+	<!-- 查询所有商品 -->
+	<select id="getCommodity" resultType="Commodity">
+		select distinct
+		<include refid="CommodityColumes"></include>
+		from COMMODITY order by COMMODITY_ID
+	</select>
+
+	<!-- 根据商品名称查询商品 -->
+	<select id="isExistCommodity" parameterType="Commodity"
+		resultType="Commodity">
+		select
+		<include refid="CommodityColumes" />
+		from COMMODITY where COMMODITY_NAME=#{commodityName}
+	</select>
+
+	<!-- 根据商品名称和编号查询商品 -->
+	<select id="isExistCommodityByIdAndName"
+		parameterType="Commodity" resultType="Commodity">
+		select
+		<include refid="CommodityColumes" />
+		from COMMODITY where COMMODITY_NAME=#{commodityName} and
+		COMMODITY_ID=#{commodityId}
+	</select>
+
+	<!-- 根据商品编号查询商品和商品类型 -->
+	<select id="getCommodityById" parameterType="Integer"
+		resultMap="CommodityMap">
+		select * from COMMODITY c inner join COMMODITYTYPE t on
+		c.comtype_id=t.comtype_id where c.commodity_id=#{value}
+	</select>
+	
+	<!-- 返回 -->
+	<resultMap type="Commodity" id="CommodityMap">
+		<id column="COMMODITY_ID" property="commodityId" javaType="Integer" />
+		<result column="COMMODITY_NAME" property="commodityName"
+			javaType="String" />
+		<result column="PLACE_PRODUCTION" property="placeProduction"
+			javaType="String" />
+		<result column="MANUFACTURER" property="manufacturer"
+			javaType="String" />
+		<result column="PURCHASE_PRICE" property="purchasePrice"
+			javaType="Double" />
+		<result column="SELLING_PRICE" property="sellingPrice"
+			javaType="Double" />
+		<result column="VOLUME" property="volume" javaType="Integer" />
+		<result column="MIN_QUANTITY" property="minQuantity"
+			javaType="Integer" />
+		<result column="MAX_QUANTITY" property="maxQuantity"
+			javaType="Integer" />
+		<association property="comType" javaType="CommodiType">
+			<id column="COMTYPE_ID" property="comTypeId" javaType="Integer" />
+			<result column="COMTYPE_NAME" property="comTypeName"
+				javaType="String" />
+		</association>
+	</resultMap>
+	
+	<!-- 查询商品总数 -->
+	<select id="findCountCommodity" resultType="int" parameterType="Commodity">
+		select count(*) total
+		from COMMODITY c
+		<include refid="whereCom"/>
+	</select>
+</mapper>

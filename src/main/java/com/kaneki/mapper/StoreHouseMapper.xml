@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.StoreHouseMapper">
+	<insert id="addStoreHouse" parameterType="StoreHouse">
+		insert into
+		STOREHOUSE(STOREHOUSE_ID,USER_ID,STOREHOUSE_NAME,STOREHOUSE_ADDRESS)
+		values
+		(SEQ_STOREHOUSE.NEXTVAL,#{user.userId},#{storeHouseName},#{storeHouseAddress})
+	</insert>
+
+	<update id="updateStoreHouse" parameterType="StoreHouse">
+		update STOREHOUSE
+		<trim prefix="set" suffixOverrides=",">
+			<if test="user.userId != null">
+				USER_ID=#{user.userId},
+			</if>
+			<if test="storeHouseName != null and storeHouseName != ''">
+				STOREHOUSE_NAME=#{storeHouseName},
+			</if>
+			<if test="storeHouseAddress != null and storeHouseAddress != ''">
+				STOREHOUSE_ADDRESS=#{storeHouseAddress},
+			</if>
+		</trim>
+		where STOREHOUSE_ID=#{storeHouseId}
+	</update>
+
+	<delete id="deleteStoreHouse" parameterType="Integer">
+		delete from
+		STOREHOUSE
+		where STOREHOUSE_ID=#{storeHouseId}
+	</delete>
+	<sql id="StoreHouseColumes">
+		STOREHOUSE_ID as storeHouseId,STOREHOUSE_NAME as storeHouseName,STOREHOUSE_ADDRESS
+		as storeHouseAddress
+	</sql>
+	<select id="findAllStoreHouse" parameterType="StoreHouse"
+		resultMap="StoreHouseMap">
+		select * from
+		(select xx.*, rownum as rn from
+		(select * from STOREHOUSE s inner join users u on s.user_id=u.user_id
+		<if test="storeHouseName != null and storeHouseName !=''">
+			<bind name="StoreHouseName" value="'%'+storeHouseName+'%'" />
+			where STOREHOUSE_NAME like #{StoreHouseName}
+		</if>
+		order by STOREHOUSE_ID desc) xx
+		where rownum &lt;= (#{size}*#{page})) xxx
+		where rn &gt; ((#{page}-1)*#{size})
+	</select>
+
+	<select id="getStoreHouse" resultType="StoreHouse">
+		select distinct
+		<include refid="StoreHouseColumes"></include>
+		from STOREHOUSE order by STOREHOUSE_ID
+	</select>
+
+	<select id="isExistStoreHouse" parameterType="StoreHouse"
+		resultType="StoreHouse">
+		select
+		<include refid="StoreHouseColumes" />
+		from STOREHOUSE where STOREHOUSE_NAME=#{storeHouseName}
+	</select>
+
+	<select id="isExistStoreHouseByIdAndName"
+		parameterType="StoreHouse" resultType="StoreHouse">
+		select
+		<include refid="StoreHouseColumes" />
+		from STOREHOUSE where STOREHOUSE_NAME=#{storeHouseName} and
+		STOREHOUSE_ID=#{storeHouseId}
+	</select>
+
+
+	<select id="getStoreHouseBystoreHouseId" parameterType="Integer"
+		resultMap="StoreHouseMap">
+		select * from STOREHOUSE s inner join users u on
+		s.user_id=u.user_id where s.storehouse_id=#{value}
+	</select>
+
+	<resultMap type="StoreHouse" id="StoreHouseMap">
+		<id column="STOREHOUSE_ID" property="storeHouseId"
+			javaType="Integer" />
+		<result column="STOREHOUSE_NAME" property="storeHouseName"
+			javaType="String" />
+		<result column="STOREHOUSE_ADDRESS"
+			property="storeHouseAddress" javaType="String" />
+		<association property="user" javaType="User">
+			<id column="USER_ID" property="userId" javaType="Integer" />
+			<result column="USER_NAME" property="userName"
+				javaType="String" />
+		</association>
+	</resultMap>
+
+	<select id="findCountStoreHouse" resultType="int">
+		select count(*)
+		total from STOREHOUSE
+	</select>
+
+
+
+
+</mapper>

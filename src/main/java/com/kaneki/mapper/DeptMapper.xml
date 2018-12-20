@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaneki.mapper.DeptMapper">
+	<!-- 增加部门 -->
+	<insert id="addDept" parameterType="Dept">
+		insert into
+		DEPARTMENT(DEPT_ID,DEPT_NAME) values(SEQ_DEPT.nextval,#{deptName})
+	</insert>
+
+	<!-- 更新部门 -->
+	<update id="updateDept" parameterType="Dept">
+		update DEPARTMENT
+		<set>
+			<if test="deptName !=null and deptName !=''">
+				DEPT_NAME=#{deptName}
+			</if>
+		</set>
+		where DEPT_ID=#{deptId}
+	</update>
+
+	<!-- 删除部门 -->
+	<delete id="deleteDept" parameterType="Integer">
+		delete from DEPARTMENT
+		where DEPT_ID=#{deptId}
+	</delete>
+
+	<!-- 数据库列名转POJO属性名 -->
+	<sql id="DeptColumes">
+		DEPT_ID as deptId,DEPT_NAME as deptName
+	</sql>
+
+	<!-- 分页查询部门 -->
+	<select id="findAllDept" parameterType="Dept" resultType="Dept">
+		select
+		<include refid="DeptColumes" />
+		from
+		(select xx.*, rownum as rn from
+		(select * from DEPARTMENT
+		<include refid="whereDept"/>
+		order by DEPT_ID desc) xx
+		where rownum&lt;=(#{size}*#{page})) xxx
+		where
+		rn&gt;((#{page}-1)*#{size})
+
+	</select>
+
+	<!-- 查询所有部门 -->
+	<select id="getDept" resultType="Dept">
+		select
+		<include refid="DeptColumes" />
+		from DEPARTMENT
+	</select>
+
+	<!-- 根据id查询 -->
+	<select id="findDeptById" parameterType="Integer"
+		resultType="Dept">
+		select
+		<include refid="DeptColumes" />
+		from DEPARTMENT where DEPT_ID=#{deptId}
+	</select>
+
+	<sql id="whereDept">
+		<if test="deptName!= null and deptName !=''">
+			<bind name="DeptName" value="'%'+deptName+'%'" />
+			where DEPT_NAME like #{DeptName}
+		</if>
+	</sql>
+
+	<!-- 根据deptName查询 -->
+	<select id="findDeptByName" parameterType="Dept"
+		resultType="Dept">
+		<bind name="DeptName" value="'%'+deptName+'%'" />
+		select
+		<include refid="DeptColumes" />
+		from DEPARTMENT where DEPT_NAME like #{DeptName}
+		<if test="deptId != null">
+			and DEPT_ID=#{deptId}
+		</if>
+		ORDER BY DEPT_ID ASC
+	</select>
+
+	<!-- 根据多个id查询 -->
+	<select id="findDeptByInId" parameterType="List"
+		resultType="Dept">
+		select
+		<include refid="DeptColumes" />
+		from DEPARTMENT where DEPT_ID in
+		<foreach collection="list" index="index" open="("
+			item="deptId" separator="," close=")">
+			#{deptId}
+		</foreach>
+		ORDER BY DEPT_ID ASC
+	</select>
+
+	<!-- 查询部门总数 -->
+	<select id="findCountDept" resultType="int" parameterType="Dept">
+		select count(*) total from
+		DEPARTMENT
+		<include refid="whereDept"/>
+	</select>
+
+	<!-- 根据deptId查询一对多的关系 -->
+	<select id="findDeptWithUser" parameterType="Integer"
+		resultMap="DeptWithUserResult">
+		select * from DEPARTMENT where DEPT_ID=#{deptId}
+	</select>
+
+	<!-- 根据deptId查询用户表 -->
+	<select id="findUserByDeptId" parameterType="Integer"
+		resultMap="UserResult">
+		select * from USERS where DEPT_ID=#{deptId}
+	</select>
+
+	<!-- findUserByDeptId的resultMap -->
+	<resultMap type="User" id="UserResult">
+		<id property="userId" column="USER_ID" />
+		<result property="userName" column="USER_NAME" />
+		<result property="userPassword" column="USER_PASSWORD" />
+		<result property="userSex" column="USER_SEX" />
+		<result property="userBirthday" column="USER_BIRTHDAY" />
+		<result property="userAddress" column="USER_ADDRESS" />
+		<result property="userPhone" column="USER_PHONE" />
+	</resultMap>
+
+	<!-- findDeptWithUser的resultMap -->
+	<resultMap type="Dept" id="DeptWithUserResult">
+		<id property="deptId" column="DEPT_ID" />
+		<result property="deptName" column="DEPT_NAME" />
+		<collection property="userList" column="DEPT_ID"
+			ofType="User" select="com.kaneki.mapper.DeptMapper.findUserByDeptId" />
+	</resultMap>
+</mapper>
