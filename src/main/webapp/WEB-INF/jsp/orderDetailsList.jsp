@@ -265,7 +265,7 @@
 		}
 		// 创建商品
 		function create() {
-		alert($("#new_form").serialize());
+		//alert($("#new_form").serialize());
 			$.post("<%=basePath%>/addOrderDetails.action",
 				$("#new_form").serialize(), function(data) {
 					if (data == "OK") {
