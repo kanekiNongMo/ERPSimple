@@ -60,7 +60,7 @@
 		DEPARTMENT D on
 		U.DEPT_ID=D.DEPT_ID 
 		<include refid="whereName" />
-		order by L.LOG_ID desc
+		order by L.LOG_ID desc 
 		) L )x
 		where rownum &lt;=(#{size}*#{page})) xx
 		where rn &gt;
