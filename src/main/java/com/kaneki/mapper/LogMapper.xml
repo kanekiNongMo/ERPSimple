@@ -58,8 +58,9 @@
 		LOGS L on U.USER_ID = L.USER_ID left
 		join
 		DEPARTMENT D on
-		U.DEPT_ID=D.DEPT_ID order by L.LOG_ID desc
+		U.DEPT_ID=D.DEPT_ID 
 		<include refid="whereName" />
+		order by L.LOG_ID desc
 		) L )x
 		where rownum &lt;=(#{size}*#{page})) xx
 		where rn &gt;
