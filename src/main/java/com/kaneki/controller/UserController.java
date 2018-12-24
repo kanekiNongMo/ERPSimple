@@ -171,6 +171,17 @@ public class UserController {
 		model.addAttribute("USERID", userId);
 		return "updatePassword";
 	}
+	//批量删除
+	@RequestMapping(value = "/deleteAllUser.action")
+	@ResponseBody
+	public String delStansard(Integer [] ids) {
+		int i=userService.delStansard(ids);
+		if (i > 0) {
+			return "OK";
+		} else {
+			return "FAIL";
+		}
+	}
 
 	// 判断原密码是否正确
 	@RequestMapping(value = "/isOldPassword.action")

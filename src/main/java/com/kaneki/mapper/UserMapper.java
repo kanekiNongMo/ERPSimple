@@ -40,4 +40,7 @@ public interface UserMapper {
 
 	// 查询所有用户
 	public List<User> getUser();
+	
+	//批量删除
+	public int delStansard(Integer [] ids);
 }

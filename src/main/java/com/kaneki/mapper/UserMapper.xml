@@ -50,6 +50,14 @@
 		USER_ID=#{userId}
 	</delete>
 	
+	<delete id="delStansard" >
+		delete from USERS where
+		USER_ID in
+		<foreach collection="array" item="ids" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</delete>
+	
 	<sql id="whereUser">
 	<if test="userName !=null and userName !=''">
 			<bind name="UserName" value="'%'+userName+'%'" />

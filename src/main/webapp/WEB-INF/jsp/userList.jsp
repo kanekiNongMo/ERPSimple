@@ -18,8 +18,7 @@
 <!-- Bootstrap Core CSS -->
 <link href="<%=basePath%>resource/css/bootstrap.min.css"
 	rel="stylesheet" />
-<link href="<%=basePath%>resource/css/erp.css"
-	rel="stylesheet" />
+<link href="<%=basePath%>resource/css/erp.css" rel="stylesheet" />
 </head>
 <body>
 	<div id="wrapper">
@@ -45,50 +44,54 @@
 				<div class="col-lg-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
+							<a href="#" class="btn btn-primary" id="del">删除</a> 用户信息列表
 							<a href="#" class="btn btn-primary" data-toggle="modal"
+								style="float: right; margin-right: 10%;"
 								data-target="#newUserDialog" onclick="clearUser()">新建</a>
-							用户信息列表
 						</div>
 
 						<!-- /.panel-heading -->
 						<div class="table-responsive">
-						<table class="table table-bordered table-striped table-hover">
-							<thead>
-								<tr>
-									<th>编号</th>
-									<th>用户名称</th>
-									<th>性别</th>
-									<th>年龄</th>
-									<th>住址</th>
-									<th>手机</th>
-									<th>部門名称</th>
-									<th>操作</th>
-								</tr>
-							</thead>
-							<tbody>
-								 <c:forEach items="${page.list}" var="user"> 
-								<tr>
-									<td>${user.userId}</td>
-									<td>${user.userName}</td>
-									<td>${user.userSex}</td>
-									<td>${user.age}</td>
-									<td>${user.userAddress}</td>
-									<td>${user.userPhone}</td>
-									<th>${user.dept.deptName}</th>
-									<td><a href="#" class="btn btn-primary btn-xs"
-										data-toggle="modal" data-target="#UserEditDialog"
-										onclick="editUser(${user.userId})">修改</a> <a href="#"
-										class="btn btn-danger btn-xs"
-										onclick="deleteUser(${user.userId})">注销</a></td>
-								</tr>
-							 </c:forEach> 
-							</tbody>
-						</table>
+							<table class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th><input type="checkbox" id="all"/></th>
+										<th>编号</th>
+										<th>用户名称</th>
+										<th>性别</th>
+										<th>年龄</th>
+										<th>住址</th>
+										<th>手机</th>
+										<th>部門名称</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach items="${page.list}" var="user">
+										<tr>
+											<th><input type="checkbox" name='id'
+												value="${user.userId}" /></th>
+											<td>${user.userId}</td>
+											<td>${user.userName}</td>
+											<td>${user.userSex}</td>
+											<td>${user.age}</td>
+											<td>${user.userAddress}</td>
+											<td>${user.userPhone}</td>
+											<th>${user.dept.deptName}</th>
+											<td><a href="#" class="btn btn-primary btn-xs"
+												data-toggle="modal" data-target="#UserEditDialog"
+												onclick="editUser(${user.userId})">修改</a> <a href="#"
+												class="btn btn-danger btn-xs"
+												onclick="deleteUser(${user.userId})">注销</a></td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
 						</div>
 						<div class="col-md-12 text-right">
 							<kaneki:page
 								url="${pageContext.request.contextPath }/userList.action" />
-						</div> 
+						</div>
 						<!-- /.panel-body -->
 					</div>
 					<!-- /.panel -->
@@ -99,8 +102,8 @@
 		<!-- 用户列表查询部分  end-->
 	</div>
 	<!-- 创建用户模态框 -->
-	<div class="modal fade" id="newUserDialog" tabindex="-1"
-		role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal fade" id="newUserDialog" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -117,14 +120,16 @@
 								用户名称 </label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="user_Name"
-									placeholder="用户名称" name="userName" onkeyup="this.value=this.value.replace(/\s+/g,'');"/>
+									placeholder="用户名称" name="userName"
+									onkeyup="this.value=this.value.replace(/\s+/g,'');" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="user_Password" class="col-sm-2 control-label">用户密码</label>
 							<div class="col-sm-10">
 								<input type="password" class="form-control" id="user_Password"
-									placeholder="用户密码" name="userPassword" onkeyup="this.value=this.value.replace(/\s+/g,'');"/>
+									placeholder="用户密码" name="userPassword"
+									onkeyup="this.value=this.value.replace(/\s+/g,'');" />
 							</div>
 						</div>
 						<div class="form-group">
@@ -137,14 +142,15 @@
 						<div class="form-group">
 							<label for="user_Birthday" class="col-sm-2 control-label">出生年月</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="user_Birthday" placeholder="出生年月"
-									name="userBirthday" />
+								<input type="text" class="form-control" id="user_Birthday"
+									placeholder="出生年月" name="userBirthday" />
 							</div>
-						</div> 
+						</div>
 						<div class="form-group">
 							<label for="user_Address" class="col-sm-2 control-label">联系地址</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="user_Address" onkeyup="this.value=this.value.replace(/\s+/g,'');"
+								<input type="text" class="form-control" id="user_Address"
+									onkeyup="this.value=this.value.replace(/\s+/g,'');"
 									placeholder="联系地址" name="userAddress" />
 							</div>
 						</div>
@@ -155,21 +161,19 @@
 									placeholder="电话" name="userPhone" />
 							</div>
 						</div>
-						
-					<div class="form-group">
-						<label for="customerFrom" class="col-sm-2 control-label">所属部门</label> 
-						<div class="col-sm-10">
-						<select	class="form-control" id="deptFrom" name="dept.deptId">
-							<option value="">--请选择--</option>
-							<c:forEach items="${DEPTS}" var="dept">
-								<option value="${dept.deptId}" >
-								    ${dept.deptName}
-								</option>
-							</c:forEach>
-						</select>
+
+						<div class="form-group">
+							<label for="customerFrom" class="col-sm-2 control-label">所属部门</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="deptFrom" name="dept.deptId">
+									<option value="">--请选择--</option>
+									<c:forEach items="${DEPTS}" var="dept">
+										<option value="${dept.deptId}">${dept.deptName}</option>
+									</c:forEach>
+								</select>
+							</div>
 						</div>
-					</div>
-						
+
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -180,8 +184,8 @@
 		</div>
 	</div>
 	<!-- 修改用户模态框 -->
-	<div class="modal fade" id="UserEditDialog" tabindex="-1"
-		role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal fade" id="UserEditDialog" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -197,7 +201,8 @@
 						<div class="form-group">
 							<label for="edit_userName" class="col-sm-2 control-label">用户名称</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="edit_userName" onkeyup="this.value=this.value.replace(/\s+/g,'');"
+								<input type="text" class="form-control" id="edit_userName"
+									onkeyup="this.value=this.value.replace(/\s+/g,'');"
 									placeholder="用户名称" name="userName" />
 							</div>
 						</div>
@@ -211,14 +216,15 @@
 						<div class="form-group">
 							<label for="edit_userBirthday" class="col-sm-2 control-label">出生年月</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="edit_userBirthday" placeholder="出生年月"
-									name="userBirthday" />
+								<input type="text" class="form-control" id="edit_userBirthday"
+									placeholder="出生年月" name="userBirthday" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="edit_userAddress" class="col-sm-2 control-label">联系地址</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="edit_userAddress" onkeyup="this.value=this.value.replace(/\s+/g,'');"
+								<input type="text" class="form-control" id="edit_userAddress"
+									onkeyup="this.value=this.value.replace(/\s+/g,'');"
 									placeholder="联系地址" name="userAddress" />
 							</div>
 						</div>
@@ -230,18 +236,17 @@
 							</div>
 						</div>
 						<div class="form-group">
-						<label for="edit_deptFrom" class="col-sm-2 control-label">所属部门</label> 
-						<div class="col-sm-10">
-						<select	class="form-control" id="edit_deptFrom" name="dept.deptId">
-							<option value="">--请选择--</option>
-							<c:forEach items="${DEPTS}" var="dept">
-								<option value="${dept.deptId}" >
-								    ${dept.deptName}
-								</option>
-							</c:forEach>
-						</select>
+							<label for="edit_deptFrom" class="col-sm-2 control-label">所属部门</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="edit_deptFrom"
+									name="dept.deptId">
+									<option value="">--请选择--</option>
+									<c:forEach items="${DEPTS}" var="dept">
+										<option value="${dept.deptId}">${dept.deptName}</option>
+									</c:forEach>
+								</select>
+							</div>
 						</div>
-					</div>
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -488,7 +493,59 @@
            });
            return flag2;
         } 
-
+      
+       //批量删除
+         var oall=document.getElementById("all");
+       	var oid=document.getElementsByName("id");
+       	oall.onclick=function(){
+       		for(var i=0;i<oid.length;i++){
+       			oid[i].checked=oall.checked;
+       		}	
+       	};
+       	for(var i=0;i<oid.length;i++){
+       		oid[i].onclick=function(){
+       			for(var j=0;j<oid.length;j++){
+       				if(oid[j].checked==false){
+       					oall.checked=false;
+       					break;
+       				}else{
+       					oall.checked=true;
+       				}
+       			}
+       		}
+       		
+       	}
+       	
+       	$("#del").click(function(){
+       		if (confirm('确实要删除吗?')) {
+       		var ids="";
+       		var n=0;
+       		for(var i=0;i<oid.length;i++){
+       			if(oid[i].checked==true){
+       				var id=oid[i].value;
+       				if(n==0){
+       					ids+="ids="+id;
+       				}else{
+       					ids+="&ids="+id;
+       				}
+       				n++;
+       			}
+       		}
+       		//alert(ids);
+       		if(ids==""){
+       			alert("请选择！");
+       		}else{
+       		$.post("<%=basePath%>/deleteAllUser.action",ids,function(data){
+       			if(data=="OK"){
+       				alert("删除成功！");
+       				window.location.reload();
+       			}else{
+       				alert("删除失败！");
+       				window.location.reload();
+       			}
+       		});}}
+       	});
+       
       /* if(!flag){
            //提示错误效果
                 $("#phoneDiv").removeClass().addClass("ui-form-item has-error");

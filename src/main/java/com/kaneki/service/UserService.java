@@ -40,4 +40,7 @@ public interface UserService {
 
 	// 获取所有用户信息
 	public List<User> getUser();
+	
+	//批量删除
+	public int delStansard(Integer [] ids);
 }

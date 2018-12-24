@@ -98,5 +98,10 @@ public class UserServiceImpl implements UserService {
 	public List<User> getUser() {
 		return this.userMapper.getUser();
 	}
+	
+	//批量删除
+	public int delStansard(Integer[] ids) {
+		return this.userMapper.delStansard(ids);
+	}
 
 }
