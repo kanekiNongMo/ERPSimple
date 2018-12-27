@@ -142,8 +142,11 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", dept=" + dept + ", userName=" + userName + ", userPassword=" + userPassword
-				+ ", userSex=" + userSex + ", userBirthday=" + userBirthday + ", userAddress=" + userAddress
-				+ ", userPhone=" + userPhone + ", ress=" + ress + "]";
+				+ ", userSex=" + userSex + ", age=" + age + ", userBirthday=" + userBirthday + ", userAddress="
+				+ userAddress + ", userPhone=" + userPhone + ", ress=" + ress + ", userImage=" + userImage + ", QQ="
+				+ QQ + ", page=" + page + ", size=" + size + "]";
 	}
+
+	
 
 }

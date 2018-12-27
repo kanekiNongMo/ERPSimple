@@ -331,7 +331,7 @@
 					$("#edit_userBirthday").val(data.age);
 					$("#edit_userAddress").val(data.userAddress);
 					$("#edit_userPhone").val(data.userPhone);
-					$("#edit_QQ").val(data.QQ);
+					$("#edit_QQ").val(data.qq);
 					$("#edit_deptFrom").val(data.dept.deptId);
 					
 				}

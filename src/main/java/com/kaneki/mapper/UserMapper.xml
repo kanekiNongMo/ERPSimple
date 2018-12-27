@@ -176,8 +176,7 @@
 			javaType="String" />
 		<result property="userPhone" column="USER_PHONE"
 			javaType="String" />
-		<result property="QQ" column="QQ"
-			javaType="String" />
+		<result property="QQ" column="QQ" javaType="String" />
 		<result property="age" column="age" javaType="String" />
 		<association property="dept" javaType="Dept">
 			<id property="deptId" column="DEPT_ID" javaType="Integer" />

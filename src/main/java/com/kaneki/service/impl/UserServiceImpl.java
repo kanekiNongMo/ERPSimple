@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
 
 	// 根据用户编号查询用户信息
 	public User findUserById(Integer userId) {
+			System.out.println(userMapper.findUserById(userId));
 		return this.userMapper.findUserById(userId);
 	}
 
