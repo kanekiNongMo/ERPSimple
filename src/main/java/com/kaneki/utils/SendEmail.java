@@ -39,7 +39,7 @@ public class SendEmail {
 		properties.put("mail.smtp.ssl.socketFactory", sf);
 		Session session = Session.getDefaultInstance(properties, new Authenticator() {
 			public PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("2913489539@qq.com", "ekwymxfwzqyndefb");
+				return new PasswordAuthentication("2913489539@qq.com", "etxzmepvsyktdfig");
 			}
 		});
 
@@ -47,9 +47,9 @@ public class SendEmail {
 			MimeMessage message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(from));
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-			message.setSubject("��֤��:");
+			message.setSubject("进销存 用户登录");
 			new GeneId();
-			message.setText(code);
+			message.setText("验证码为："+code);
 			Transport.send(message);
 		} catch (MessagingException mex) {
 			mex.printStackTrace();

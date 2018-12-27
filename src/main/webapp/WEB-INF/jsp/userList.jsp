@@ -62,6 +62,7 @@
 										<th>年龄</th>
 										<th>住址</th>
 										<th>手机</th>
+										<th>QQ</th>
 										<th>部門名称</th>
 										<th>操作</th>
 									</tr>
@@ -77,6 +78,7 @@
 											<td>${user.age}</td>
 											<td>${user.userAddress}</td>
 											<td>${user.userPhone}</td>
+											<td>${user.QQ}</td>
 											<th>${user.dept.deptName}</th>
 											<td><a href="#" class="btn btn-primary btn-xs"
 												data-toggle="modal" data-target="#UserEditDialog"

@@ -43,4 +43,7 @@ public interface UserService {
 	
 	//批量删除
 	public int delStansard(Integer [] ids);
+	
+	//根据qq查询
+	public User findUserQQ(String QQ);
 }

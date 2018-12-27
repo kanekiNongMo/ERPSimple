@@ -95,13 +95,36 @@ public class UserController {
 		session.invalidate();
 		return "login";
 	}
-
+	
+	// 用户通过邮箱登录
+	@RequestMapping(value = "/emaillogin.action", method = RequestMethod.POST)
+	public String qqlogin(String QQ, String code, Model model, HttpSession session) {
+		
+		String qqCode=(String)session.getAttribute("code");
+		System.out.println("qqcode:"+qqCode);
+		if(qqCode.equals(code)) {
+			User user = userService.findUserQQ(QQ);
+			if (user != null) {
+				List<Menu> list = menuService.selectMenuByUserId(user.getUserId());
+				model.addAttribute("MENUS", list);
+				session.setAttribute("USER_SESSION", user);
+				return "index";
+			}
+		}
+		
+		model.addAttribute("msg", "验证码错误！");
+		return "emaillogin";
+	}
+	
 	// 跳转到登录页面
 	@RequestMapping(value = "/login.action", method = RequestMethod.GET)
 	public String toLogin() {
 		return "login";
 	}
-
+	@RequestMapping(value = "/emaillogin.action", method = RequestMethod.GET)
+	public String toEamillogin() {
+		return "emaillogin";
+	}
 	// 分页查询所有用户信息
 	@RequestMapping(value = "/userList.action")
 	public String userList(@RequestParam(defaultValue = "1") Integer page,
@@ -152,9 +175,16 @@ public class UserController {
 	// 开发中
 	// 发送验证码到用户邮箱
 	@RequestMapping(value = "/getCode.action")
-	public void getCode(String toQQMail) {
-		String code = SendEmail.mainBoxCode(toQQMail);
+	@ResponseBody
+	public String getCode(String email,HttpSession session) {
+		if(email!=null) {
+		String code = SendEmail.mainBoxCode(email);
+		session.setAttribute("code", code);
+		session.setMaxInactiveInterval(5*60);
 		System.out.println(code);
+		return "OK";
+		}
+		return "FAIL";
 	}
 
 	// 获取登录用户个人信息

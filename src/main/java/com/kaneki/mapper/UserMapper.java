@@ -43,4 +43,7 @@ public interface UserMapper {
 	
 	//批量删除
 	public int delStansard(Integer [] ids);
+	
+	//根据QQ查询
+	public User findUserQQ(User user);
 }

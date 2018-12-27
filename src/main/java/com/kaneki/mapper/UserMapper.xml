@@ -138,6 +138,13 @@
 		from USERS where USER_PHONE=#{userPhone} and
 		USER_PASSWORD=#{userPassword}
 	</select>
+	
+	<!-- 根据用户QQ查询 -->
+	<select id="findUserQQ" parameterType="User"
+		resultMap="userWithRes">
+		select *
+		from USERS where QQ=#{QQ} 
+	</select>
 
 	<!-- 查询用户总数 -->
 	<select id="findCountUser" resultType="int" parameterType="User">
@@ -165,6 +172,8 @@
 		<result property="userAddress" column="USER_ADDRESS"
 			javaType="String" />
 		<result property="userPhone" column="USER_PHONE"
+			javaType="String" />
+		<result property="QQ" column="QQ"
 			javaType="String" />
 		<result property="age" column="age" javaType="String" />
 		<association property="dept" javaType="Dept">

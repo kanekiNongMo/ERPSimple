@@ -23,6 +23,7 @@ public class User {
 	private String userPhone;// 用户电话，账号
 	private List<Res> ress;// 用户权限
 	private String userImage;// 用户头像路径+名称
+	private String QQ;
 	private Integer page;
 	private Integer size;
 	
@@ -128,6 +129,14 @@ public class User {
 
 	public void setUserPhone(String userPhone) {
 		this.userPhone = userPhone;
+	}
+
+	public String getQQ() {
+		return QQ;
+	}
+
+	public void setQQ(String qQ) {
+		QQ = qQ;
 	}
 
 	@Override

@@ -104,4 +104,11 @@ public class UserServiceImpl implements UserService {
 		return this.userMapper.delStansard(ids);
 	}
 
+	//通过QQ登录
+	public User findUserQQ(String QQ) {
+			User user = new User();
+			user.setQQ(QQ);
+			return this.userMapper.findUserQQ(user);
+	}
+
 }
