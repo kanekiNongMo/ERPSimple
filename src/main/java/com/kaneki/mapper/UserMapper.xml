@@ -35,6 +35,9 @@
 			<if test="userAddress != null and userAddress!=''">
 				USER_ADDRESS=#{userAddress},
 			</if>
+			<if test="QQ != null and QQ!=''">
+				QQ=#{QQ},
+			</if>
 			<if test="dept !=null">
 				<if test="dept.deptId != null">
 					DEPT_ID =#{dept.deptId},
@@ -196,6 +199,8 @@
 		<result property="userAddress" column="USER_ADDRESS"
 			javaType="String" />
 		<result property="userPhone" column="USER_PHONE"
+			javaType="String" />
+		<result property="QQ" column="QQ"
 			javaType="String" />
 		<association property="dept" javaType="Dept">
 			<id property="deptId" column="DEPT_ID" javaType="Integer" />

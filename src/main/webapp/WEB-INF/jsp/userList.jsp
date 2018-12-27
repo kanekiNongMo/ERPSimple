@@ -238,6 +238,13 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label for="edit_QQ" class="col-sm-2 control-label">QQ</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="edit_QQ"
+									placeholder="QQ" name="QQ" />
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="edit_deptFrom" class="col-sm-2 control-label">所属部门</label>
 							<div class="col-sm-10">
 								<select class="form-control" id="edit_deptFrom"
@@ -324,6 +331,7 @@
 					$("#edit_userBirthday").val(data.age);
 					$("#edit_userAddress").val(data.userAddress);
 					$("#edit_userPhone").val(data.userPhone);
+					$("#edit_QQ").val(data.QQ);
 					$("#edit_deptFrom").val(data.dept.deptId);
 					
 				}
