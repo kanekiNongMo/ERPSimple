@@ -102,7 +102,7 @@ public class UserController {
 		
 		String qqCode=(String)session.getAttribute("code");
 		System.out.println("qqcode:"+qqCode);
-		if(qqCode.equals(code)) {
+		if(qqCode!=null&&qqCode.equals(code)) {
 			User user = userService.findUserQQ(QQ);
 			if (user != null) {
 				List<Menu> list = menuService.selectMenuByUserId(user.getUserId());
