@@ -36,7 +36,7 @@ public class LogAopAspect {
         // 获取操作描述的属性值
         String operateType = logAnno.operateType();
         // 创建一个日志对象(准备记录日志)
-        Log log = new Log();
+        Log log = new  Log(); 
         log.setLogRecord(operateType);// 操作说明
         //获取request
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
